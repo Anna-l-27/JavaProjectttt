@@ -18,13 +18,13 @@ public class Main {
 
         // Handle ParseException if the date string format is invalid.
         try {
-        dob1 = sdf.parse("2005-11-27");
-        dob2 = sdf.parse("2005-11-27");
+            dob1 = sdf.parse("2005-11-27");
+            dob2 = sdf.parse("2005-11-27");
         } catch (Exception e) {
-        System.out.println("Failed to parse date: " + e.getMessage());
+            System.out.println("Failed to parse date: " + e.getMessage());
         }
 
-        //Create patient name
+        //Create patient identity
         PatientIdentity id1 = new PatientIdentity(name1, dob1);
         PatientIdentity id2 = new PatientIdentity(name2, dob2);
 
@@ -34,6 +34,18 @@ public class Main {
         // Print results 
         System.out.println(patient.toString());
         System.out.println("Match test: " + id1.match(id2)); // Expected output: true/false
+    
+        // Create and add to PatientList
+        PatientList list = new PatientList();
+        list.add(patient);
+
+        // Search for patient in the list
+        Patient found = list.find(id1);
+        if (found != null) {
+            System.out.println("Found in list: " + found.toString());
+        } else {
+            System.out.println("Patient not found in list.");
+        }
     }
 }
 

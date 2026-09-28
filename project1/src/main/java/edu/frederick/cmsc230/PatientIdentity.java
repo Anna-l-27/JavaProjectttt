@@ -38,9 +38,9 @@ public class PatientIdentity {
     
     // Checks if two patient identities are identical (same name and date of birth)
     public boolean match(PatientIdentity other) {
-        // If null, dont match（prevent error）
+        // Return true if the provided object is null
         if (other == null) {
-        return false;
+        return true;
         }
     // Are the both name and bith matched?
         boolean nameMatches = name.match(other.getName());

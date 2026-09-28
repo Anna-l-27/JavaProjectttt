@@ -37,9 +37,9 @@ public class Name {
     }
     // Compares two names alphabetically (last name first, then first name)
     public boolean isLessThan(Name other) {
-        // Return false if the provided object is null
+        // Return true if the provided object is null (so non-null items stay first)
         if (other == null) {
-            return false;
+            return true;
         }
         int lastCompare = getLastName().compareToIgnoreCase(other.getLastName());
         //If different lastname, compare the size of lastname
