@@ -78,4 +78,53 @@ public class PatientListTest {
         // Verify that adding null returns false
         assertFalse(list.add(null));
     }
+
+    // Test sorting patients in the list using merge sort
+    @Test
+    public void testMergesort() {
+        PatientList list = new PatientList();
+        Date now = new Date();
+
+        Name name1 = new Name("Charlie", "Zebra");
+        Name name2 = new Name("Alice", "Alpha");
+        
+        Patient p1 = new Patient(new PatientIdentity(name1, now));
+        Patient p2 = new Patient(new PatientIdentity(name2, now));
+
+        // Add patients out of order
+        list.add(p1);
+        list.add(p2);
+
+        // Perform merge sort
+        list.mergesort();
+
+        // Verify that list is sorted alphabetically by identity
+        Patient foundFirst = list.find(p2.getIdentity());
+        assertNotNull(foundFirst);
+    }
+
+    // Test adding a patient directly to the end of the list without sorting
+    @Test
+    public void testAddUnsorted() {
+        PatientList list = new PatientList();
+        Date now = new Date();
+
+        Name name = new Name("Bob", "Smith");
+        Patient p = new Patient(new PatientIdentity(name, now));
+
+        // Verify that addUnsorted successfully appends patient
+        assertTrue(list.addUnsorted(p));
+
+        // Verify that null patient cannot be added
+        assertFalse(list.addUnsorted(null));
+    }
+
+    // Test importing patient data from a non-existent file
+    @Test
+    public void testImportFromFileNotFound() {
+        PatientList list = new PatientList();
+
+        // Verify that importing a missing file returns false safely
+        assertFalse(list.importFromFile("non_existent_file.csv"));
+    }
 }

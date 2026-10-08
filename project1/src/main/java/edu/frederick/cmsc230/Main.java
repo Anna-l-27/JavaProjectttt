@@ -46,6 +46,53 @@ public class Main {
         } else {
             System.out.println("Patient not found in list.");
         }
+
+        // create a list and put patient data into the list
+        PatientList list1 = new PatientList();
+        PatientList list2 = new PatientList();
+
+        // add first patient
+        list1.add(patient);
+
+        // add second patient
+        PatientIdentity id3 = new PatientIdentity(new Name("Bob", "Smith"), dob1);
+        Patient patient2 = new Patient(id3);
+        list2.add(patient2);
+
+        // Create a new list for the merged patients
+        PatientList merged = new PatientList();
+        // Create iterators for both sorted lists
+        PatientList.Iterator iter1 = list1.new Iterator();
+        PatientList.Iterator iter2 = list2.new Iterator();
+
+        // Compare patients from both lists and add the smaller one to the merged list
+        while (iter1.peek() != null && iter2.peek() != null) {
+            if (iter1.peek().getIdentity().isLessThan(iter2.peek().getIdentity())) {
+                merged.add(iter1.next());
+            } else {
+                merged.add(iter2.next());
+            }
+        }
+
+        // Append any remaining patients from list1
+        while (iter1.peek() != null) {
+            merged.add(iter1.next());
+        }
+
+        // Append any remaining patients from list2
+        while (iter2.peek() != null) {
+            merged.add(iter2.next());
+        }
+
+        // Save the sorted patient list to a CSV file and display status
+        boolean saveSuccess = merged.saveToFile("patients.csv");
+        System.out.println("Save to file successful: " + saveSuccess);
+
+        // Initialize a new list to import and verify saved patient records
+        PatientList importedList = new PatientList();
+        boolean importSuccess = importedList.importFromFile("patients.csv");
+        System.out.println("Import from file successful: " + importSuccess);
+    
     }
 }
 

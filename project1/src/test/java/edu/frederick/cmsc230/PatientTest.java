@@ -1,6 +1,7 @@
 package edu.frederick.cmsc230;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
@@ -42,5 +43,24 @@ public class PatientTest {
 
         // Patients with different identities should not match
         assertFalse(patient1.getIdentity().match(patient3.getIdentity()));
+    }
+
+    // Test converting patient record into CSV format string
+    @Test
+    public void testToCSV() {
+        Name name = new Name("Anna", "Lee");
+        Date dob = new Date();
+        PatientIdentity identity = new PatientIdentity(name, dob);
+        Patient patient = new Patient(identity);
+
+       
+        // Verify that CSV output contains formatted name and date
+        String csvOutput = patient.toCSV(); // Expected format: "Lee,Anna," followed by date string
+        assertNotNull(csvOutput);
+        assertTrue(csvOutput.startsWith("Lee,Anna,"));
+
+        // Test behavior when identity is null
+        Patient nullPatient = new Patient(null);
+        assertEquals("", nullPatient.toCSV());
     }
 }
