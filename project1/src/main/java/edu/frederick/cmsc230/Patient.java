@@ -3,9 +3,13 @@ package edu.frederick.cmsc230;
 public class Patient {
     private PatientIdentity identity = null;
 
+    // Add prescription list field
+    private PrescriptionList prescriptions;
+
     // Constructor (initialize patient with an identity)
     public Patient(PatientIdentity id) {
         identity = id;
+        prescriptions = new PrescriptionList();
     }
 
     // Accessor method (retrieve patient identity)
@@ -18,6 +22,10 @@ public class Patient {
         return "identity: " + identity.toString();
     }
 
+    // Getter method to get the prescription list
+    public PrescriptionList getPrescriptions() {
+        return prescriptions;
+    }
    
     // Converts patient record into CSV format string (LastName,FirstName,DateOfBirth)
     public String toCSV() {

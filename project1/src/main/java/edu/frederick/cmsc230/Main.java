@@ -88,10 +88,48 @@ public class Main {
         boolean saveSuccess = merged.saveToFile("patients.csv");
         System.out.println("Save to file successful: " + saveSuccess);
 
-        // Initialize a new list to import and verify saved patient records
-        PatientList importedList = new PatientList();
-        boolean importSuccess = importedList.importFromFile("patients.csv");
-        System.out.println("Import from file successful: " + importSuccess);
+        // Import prescription data from CSV
+        System.out.println("--- Importing Prescription Data ---");
+        boolean rxSuccess = merged.importPrescriptionsFromFile("prescriptions.csv");
+        System.out.println("Prescription import success: " + rxSuccess);
+
+        // Display patients and their respective prescriptions
+        System.out.println("\n=== Patient and Prescription Records ===");
+
+        // Create an inner class Iterator instance from PatientList to traverse all patients
+        PatientList.Iterator iter = merged.new Iterator();
+
+        // Loop through the patient list using the custom iterator
+        while (iter.peek() != null) {
+            // Get the current patient and advance the iterator to the next node
+            patient = iter.next();
+            // Output patient details
+            System.out.println("\nPatient: " + patient.getIdentity().toString());
+
+            // Get the prescription list associated with the current patient
+            PrescriptionList prescriptions = patient.getPrescriptions();
+            //Reset the internal iterator cursor for the prescription list
+            prescriptions.init();
+            // Fetch the first prescription record from the list
+            Prescription pr = prescriptions.next();
+
+            // Check if the patient has no associated prescription records
+            if (pr == null) {
+                System.out.println("  (No prescriptions found)");
+                // Iterate through all prescription records for the current patient
+            } else {
+                while (pr != null) {
+                    // Print detailed information for each prescription
+                    System.out.println("  - Medication: " + pr.getMedicineName() 
+                            + " | Dosage: " + pr.getDosage() + "mg"
+                            + " | Date: " + pr.getDateOfIssue() 
+                            + " | Prescriber: " + pr.getPrescriber());
+                    
+                    // Move to the next prescription record in the linked list
+                    pr = prescriptions.next();
+                }
+            }
+        }
     
     }
 }

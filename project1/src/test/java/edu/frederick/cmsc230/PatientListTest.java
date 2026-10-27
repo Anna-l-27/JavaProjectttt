@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class PatientListTest {
@@ -126,5 +128,28 @@ public class PatientListTest {
 
         // Verify that importing a missing file returns false safely
         assertFalse(list.importFromFile("non_existent_file.csv"));
+    }
+
+    @Test 
+    public void testImportPrescriptionsFromFile() throws Exception {
+        PatientList list = new PatientList();
+    
+        // Add a sample test patient to the list matching CSV data
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date dob = sdf.parse("2005-11-27");
+        
+        Patient p = new Patient(new PatientIdentity(new Name("Anna", "Lee"), dob));
+        list.add(p);
+    
+        // Import prescription CSV file and verify that loading succeeds
+        boolean success = list.importPrescriptionsFromFile("../Prescriptions.csv");
+        assertTrue(success);
+    
+        // Verify that prescriptions were correctly added to the target patient
+        assertNotNull(p.getPrescriptions());
+        
+        // Initialize prescription list iterator and verify the first prescription node exists
+        p.getPrescriptions().init();
+        assertNotNull(p.getPrescriptions().next());
     }
 }

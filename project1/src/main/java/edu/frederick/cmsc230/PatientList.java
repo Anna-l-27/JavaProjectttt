@@ -186,6 +186,98 @@ public class PatientList {
             return false;
         }     
     }
+    // Read the prescription CSV file and add prescriptions to the corresponding patient
+    public boolean importPrescriptionsFromFile(String filename) {
+        // Check if specified CSV file exists on disk
+        File file = new File(filename);
+        if (!file.exists()) {
+            return false;
+        }
+
+        // CSV date format
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        
+        try (Scanner scanner = new Scanner(file)) {
+            //　Read CSV file line by line
+            while (scanner.hasNextLine()) {
+                
+                String line = scanner.nextLine().trim();
+                //　Skip empty lines
+                if (line.isEmpty()) {
+                    continue;
+                }
+
+                // Split CSV line by comma delimiter into tokens
+                String[] parts = line.split(",");
+                if (parts.length >= 6) {
+                    // Extract and trim prescription details from tokens
+                    String patientName = parts[0].trim();
+                    String patientDob = parts[1].trim();
+                    String medicineName = parts[2].trim();
+                    String dateStr = parts[3].trim();
+                    int dosage = Integer.parseInt(parts[4].trim());
+                    String prescriber = parts[5].trim();
+
+                    // Parse issue date string into Date object
+                    Date dateOfIssue = dateFormat.parse(dateStr);
+
+                    // Parse birth date string into Date object
+                    Date dob = dateFormat.parse(patientDob);
+
+                    // Split full name string
+                    Name name;
+                    String[] spaceParts = patientName.trim().split("\\s+");
+                        if (spaceParts.length >= 2) {
+                        // Pass firstName (spaceParts[0]) and lastName (spaceParts[1])
+                            name = new Name(spaceParts[0], spaceParts[1]);
+                        } else {
+                            name = new Name(patientName, "");
+                        }
+
+                    // compare birth dates using only year-month-day
+                    SimpleDateFormat compareSdf = new SimpleDateFormat("yyyy-MM-dd");
+
+                    //Search existing patient list for a matching patient
+                    Patient targetPatient = null;
+                    PatientList.Iterator iter = this.new Iterator();
+                    
+                    // Loop through the patient list as long as the next patient exists
+                    while (iter.peek() != null) {
+                        // Get the current patient and advance the iterator cursor
+                        Patient p = iter.next();
+
+                        // Get LastName, FirstName, and DateOfBirth -> compare
+                        String existingLast = p.getIdentity().getName().getLastName().trim();
+                        String existingFirst = p.getIdentity().getName().getFirstName().trim();
+                        String existingDob = compareSdf.format(p.getIdentity().getDateOfBirth());
+
+                        // Get last name, first name, and formatted birth date for imported patient
+                        String importLast = name.getLastName().trim();
+                        String importFirst = name.getFirstName().trim();
+                        String importDob = compareSdf.format(dob);
+                        // Match patient if first name, last name, and birth date are all equal (ignore case)
+                        if (existingLast.equalsIgnoreCase(importLast) && existingFirst.equalsIgnoreCase(importFirst) && existingDob.equals(importDob)) {
+                            // Assign the matched patient as the target patient
+                            targetPatient = p;
+                            break;
+                        }
+                    }
+                
+
+                    // If matching patient is found, add new prescription record to patient's list
+                    if (targetPatient != null) {
+                        Prescription prescription = new Prescription(medicineName, dateOfIssue, dosage, prescriber);
+                        targetPatient.getPrescriptions().add(prescription);
+                    }
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            System.err.println("Error reading prescription file: " + e.getMessage());
+            return false;
+        }
+    }
     // Adds a patient to the end of the array without sorting
     public boolean addUnsorted(Patient pat) {
         // Return false if the provided patient is null or the array has reached maximum capacity
